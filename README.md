@@ -2,7 +2,7 @@
 
 # Flux2-from-scratch
 
-<img src="./media/flux2.png" width="800"/>
+<img src="./media/flux2.png" width="800" style="border-radius: 10px;"/>
 
 </div>
 
