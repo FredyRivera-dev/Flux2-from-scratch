@@ -3,3 +3,4 @@ venv
 dist
 __pycache__
 filter_plus.py
+.env
