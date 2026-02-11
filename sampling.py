@@ -1,5 +1,4 @@
 import math
-from typing import Any
 import torch
 import torchvision
 from einops import rearrange
