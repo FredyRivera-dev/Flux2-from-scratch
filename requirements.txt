@@ -1,0 +1,6 @@
+torch
+torchvision
+einops
+pillow
+transformers
+safetensors

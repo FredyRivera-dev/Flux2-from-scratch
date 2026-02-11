@@ -112,24 +112,23 @@ from .text_encoder import load_qwen3_embedder
 #    return config["text_encoder_load_fn"](device=device)
 
 
-def load_ae(model_name: str, device: str | torch.device = "cuda") -> AutoEncoder:
-    config = FLUX2_MODEL_INFO[model_name.lower()]
+def load_ae(weight_path: str, device: str | torch.device = "cuda") -> AutoEncoder:
 
-    if "AE_MODEL_PATH" in os.environ:
-        weight_path = os.environ["AE_MODEL_PATH"]
-        assert os.path.exists(weight_path), f"Provided weight path {weight_path} does not exist"
+    if(os.path.exists(weight_path)):
+        pass
     else:
         # download from huggingface
         try:
-            weight_path = huggingface_hub.hf_hub_download(
-                repo_id=config["repo_id"],
-                filename=config["filename_ae"],
+            print("Automatically downloading the autoencoder")
+            print(huggingface_hub.hf_hub_download(
+                repo_id="black-forest-labs/FLUX.2-dev",
+                filename="ae.safetensors",
                 repo_type="model",
-            )
+                local_dir=weight_path))
         except huggingface_hub.errors.RepositoryNotFoundError:
             print(
                 f"Failed to access the model repository. Please check your internet "
-                f"connection and make sure you've access to {config['repo_id']}."
+                f"connection and make sure you've access to black-forest-labs/FLUX.2-dev."
                 "Stopping."
             )
             sys.exit(1)
