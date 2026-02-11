@@ -1,4 +1,10 @@
+<div align="center">
+
 # Flux2-from-scratch
+
+<img src="./media/flux2.png" width="800"/>
+
+</div>
 
 This repository implements the Flux2 model from scratch, specifically focusing on training the Flux2 Transformer. To simplify the process, I'm leveraging the existing AutoEncoder and Text Encoder.
 
