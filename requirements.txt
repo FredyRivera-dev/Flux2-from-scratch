@@ -4,3 +4,4 @@ einops
 pillow
 transformers
 safetensors
+datasets

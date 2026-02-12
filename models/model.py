@@ -90,17 +90,12 @@ class Flux2(nn.Module):
             self.apply(self._init_weights)
 
     def _init_weights(self, module):
+        ## The original Flux2 does not need bias and elementwise_affine
         if isinstance(module, nn.Linear):
             std = 0.02
             nn.init.normal_(module.weight, mean=0.0, std=std)
-            if module.bias is not None:
-                nn.init.zeros_(module.bias)
         elif isinstance(module, RMSNorm):
             nn.init.ones_(module.scale)
-        elif isinstance(module, nn.LayerNorm):
-            if module.elementwise_affine:
-                nn.init.ones_(module.weight)
-                nn.init.zeros_(module.bias)
 
     def forward(
         self,

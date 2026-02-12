@@ -5,10 +5,11 @@ import sys
 import huggingface_hub
 import torch
 from PIL import Image
+import shutil
 from safetensors.torch import load_file as load_sft
-from .autoencoder import AutoEncoder, AutoEncoderParams
+from models.autoencoder import AutoEncoder, AutoEncoderParams
 #from .model import Flux2, Flux2Params, Klein4BParams, Klein9BParams
-from .text_encoder import load_qwen3_embedder
+from models.text_encoder import load_qwen3_embedder
 
 #FLUX2_MODEL_INFO = {
 #    "flux.2-klein-4b": {
@@ -114,17 +115,30 @@ from .text_encoder import load_qwen3_embedder
 
 def load_ae(weight_path: str, device: str | torch.device = "cuda") -> AutoEncoder:
 
-    if(os.path.exists(weight_path)):
-        pass
-    else:
-        # download from huggingface
+    if not os.path.exists(weight_path):
+        target_dir = os.path.dirname(weight_path)
+        target_filename = os.path.basename(weight_path)
+
+        if target_dir and not os.path.exists(target_dir):
+            os.makedirs(target_dir, exist_ok=True)
+
+        if not target_dir:
+            target_dir = "."
+        
         try:
             print("Automatically downloading the autoencoder")
-            print(huggingface_hub.hf_hub_download(
+            huggingface_hub.hf_hub_download(
                 repo_id="black-forest-labs/FLUX.2-dev",
                 filename="ae.safetensors",
                 repo_type="model",
-                local_dir=weight_path))
+                local_dir=target_dir
+            )
+
+            if os.path.basename(downloaded_path) != target_filename:
+                final_path = os.path.join(target_dir, target_filename)
+                shutil.move(downloaded_path, final_path)
+                print(f"File renamed to: {final_path}")
+            
         except huggingface_hub.errors.RepositoryNotFoundError:
             print(
                 f"Failed to access the model repository. Please check your internet "
