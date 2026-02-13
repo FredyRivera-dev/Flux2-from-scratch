@@ -27,7 +27,7 @@ def split_grid_image(input_path, output_dir="output", rows=2, cols=2, return_pat
                 output_filename = f"{uuid.uuid4().hex}.png"
                 output_path = os.path.join(output_dir, output_filename)
                 cropped.save(output_path)
-                names.append(out_path if return_paths else filename)
+                names.append(output_path if return_paths else output_filename)
 
         return names
 
