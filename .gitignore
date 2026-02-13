@@ -2,7 +2,5 @@ build
 venv
 dist
 __pycache__
-filter_plus.py
 .env
 vae/
-data.py
