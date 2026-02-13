@@ -7,9 +7,9 @@ import torch
 from PIL import Image
 import shutil
 from safetensors.torch import load_file as load_sft
-from models.autoencoder import AutoEncoder, AutoEncoderParams
+from flux.models.autoencoder import AutoEncoder, AutoEncoderParams
 #from .model import Flux2, Flux2Params, Klein4BParams, Klein9BParams
-from models.text_encoder import load_qwen3_embedder
+from flux.models.text_encoder import load_qwen3_embedder
 
 #FLUX2_MODEL_INFO = {
 #    "flux.2-klein-4b": {

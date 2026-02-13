@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flux"
+version = "0.1.0"
+description = "This repo proposes to implement the Flux2 model from scratch"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "Apache License 2.0"}
+authors = [
+    {name = "Fredy Rivera", email = "fredyriveraacevedo13@gmail.com"}
+]
+keywords = [
+    "ai", 
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Environment :: Web Environment",
+    "Topic :: Software Development :: Build Tools",
+]
+dependencies = [
+    "torch",
+    "torchvision",
+    "transformers",
+    "ftfy",
+    "accelerate",
+    "protobuf",
+    "platformdirs",
+    "python-multipart",
+    "pillow",
+    "datasets",
+    "einops",
+    "safetensors"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "isort",
+    "mypy",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/FredyRivera-dev/Flux2-from-scratch"
+"Issues" = "https://github.com/FredyRivera-dev/Flux2-from-scratch/issues"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["flux", "flux.*"]
