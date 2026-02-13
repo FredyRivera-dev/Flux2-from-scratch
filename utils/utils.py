@@ -134,6 +134,8 @@ def load_ae(weight_path: str, device: str | torch.device = "cuda") -> AutoEncode
                 local_dir=target_dir
             )
 
+            downloaded_path = f"{target_dir}/ae.safetensors"
+
             if os.path.basename(downloaded_path) != target_filename:
                 final_path = os.path.join(target_dir, target_filename)
                 shutil.move(downloaded_path, final_path)
@@ -158,9 +160,15 @@ def load_ae(weight_path: str, device: str | torch.device = "cuda") -> AutoEncode
     return ae.to(device)
 
 
+
 def image_to_base64(image: Image.Image) -> str:
     """Convert PIL Image to base64 string."""
     buffered = io.BytesIO()
     image.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue()).decode()
     return img_str
+
+if __name__ == "__main__":
+    #ae = load_ae("./vae/ae.safetensors", "cuda:0")
+    print("The Auto Encoder charging process is complete")
+    #print(f"Auto Encoder: {ae}")
