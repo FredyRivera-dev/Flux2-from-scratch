@@ -5,7 +5,7 @@ from einops import rearrange
 from PIL import Image
 from torch import Tensor
 
-from .model import Flux2
+from flux.models.model import Flux2
 
 def compress_time(t_ids: Tensor) -> Tensor:
     assert t_ids.ndim == 1
