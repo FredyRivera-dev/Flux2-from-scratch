@@ -224,11 +224,7 @@ class PrepareDataFlux2:
 if __name__ == "__main__":
     data_prepare = PrepareDataFlux2(f"./data/{file_data}")
 
-    ## Only test
-    data_prepare.prepare(output_csv="./output/data.csv", image_dir="./output/images",
+    ## Parallel
+
+    data_prepare.prepare_parallel(output_csv="./output/data.csv", image_dir="./output/images",
                         batch_size=100, max_samples=200)
-
-    ## Parallel test
-
-    #data_prepare.prepare_parallel(output_csv="./output/data.csv", image_dir="./output/images",
-    #                    batch_size=100, max_samples=200)
