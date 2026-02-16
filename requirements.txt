@@ -5,3 +5,5 @@ pillow
 transformers
 safetensors
 datasets
+pandas
+dotenv
