@@ -14,24 +14,40 @@ cpu_count = mg.cpu_count()
 
 def _process_single_row(args):
     idx, row, prompt_field, image_field, image_dir, download_image = args
-    
-    try:
-        prompt = row[prompt_field]
-        image_url = row[image_field]
-        
-        if not download_image:
-            return None
+    temp_image_path = None
 
+    try:
+        import re
+        from PIL import Image
         import sys
         import os
         from utils import temp_download_image
         from grid_image import split_grid_image
         
+        prompt = row[prompt_field]
+        prompt = re.split(r'\s+--', prompt)[0].strip()
+        image_url = row[image_field]
+        
+        if not download_image:
+            return None
+
         temp_image_path = temp_download_image(image_url)
         if temp_image_path is None:
-            print(f"Error downloading image {image_url}")
+            print(f"X Error downloading image {image_url}")
             return None
-        
+
+        try:
+            with Image.open(temp_image_path) as img:
+                img.verify()
+
+            with Image.open(temp_image_path) as img:
+                img.load()
+        except Exception as e:
+            print(f"X Error: Corrupt or invalid image in row {idx}: {str(e)}")
+            if temp_image_path and os.path.exists(temp_image_path):
+                os.remove(temp_image_path)
+            return None
+
         try:
             grid_images = split_grid_image(
                 temp_image_path, 
@@ -45,9 +61,6 @@ def _process_single_row(args):
             for i, grid_img_name in enumerate(grid_images, 1):
                 result_row[f'image_{i}'] = grid_img_name
 
-            if os.path.exists(temp_image_path):
-                os.remove(temp_image_path)
-            
             return result_row
             
         except Exception as e:
@@ -59,7 +72,13 @@ def _process_single_row(args):
     except Exception as e:
         print(f"❌ Error in row {idx}: {str(e)}")
         return None
-
+    
+    finally:
+        if temp_image_path and os.path.exists(temp_image_path):
+            try:
+                os.remove(temp_image_path)
+            except Exception as e:
+                print(f"X Error deleting temporary file {temp_image_path}: {str(e)}")
 
 class PrepareDataFlux2:
     def __init__(self, csv_data: str):
@@ -227,4 +246,4 @@ if __name__ == "__main__":
     ## Parallel
 
     data_prepare.prepare_parallel(output_csv="./output/data.csv", image_dir="./output/images",
-                        batch_size=100, max_samples=200)
+                        batch_size=100, max_samples=10900)
