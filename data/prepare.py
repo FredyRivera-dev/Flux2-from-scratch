@@ -74,6 +74,7 @@ def _process_single_row(args):
         return None
     
     finally:
+        import os
         if temp_image_path and os.path.exists(temp_image_path):
             try:
                 os.remove(temp_image_path)
