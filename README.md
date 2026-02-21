@@ -26,4 +26,4 @@ The following datasets will be used for this project:
 uv pip install torch==2.9 transformers==4.57.6 https://github.com/mjun0812/flash-attention-prebuild-wheels/releases/download/v0.7.0/flash_attn-2.8.3+cu128torch2.9-cp312-cp312-linux_x86_64.whl flashinfer-python https://github.com/FredyRivera-dev/Flux2-from-scratch.git
 ```
 
-> **Note:** I'm providing a pre-compiled version of Flash Attention PyTorch 2.9, so you don't have to wait to compile it from scratch.
+> **Note:** I'm providing a pre-compiled version of Flash Attention for PyTorch 2.9, so you don't have to wait to compile it from scratch.
