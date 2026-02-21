@@ -17,51 +17,52 @@ class Qwen3Embedder(nn.Module):
     ):
         super().__init__()
 
+
+        # I'm going to use flash_attetion and bfloat16 to make inference faster.
         self.model = AutoModelForCausalLM.from_pretrained(
             model_spec,
-            torch_dtype=None,
+            torch_dtype=torch.bfloat16,
             device_map=str(device),
+            attn_implementation="flash_attention_2",
         )
+        
+        self.model.eval()
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_spec)
         self.max_length = MAX_LENGTH
 
     @torch.no_grad()
     def forward(self, txt: list[str]):
-        all_input_ids = []
-        all_attention_masks = []
-
-        for prompt in txt:
-            messages = [{"role": "user", "content": prompt}]
-            text = self.tokenizer.apply_chat_template(
-                messages,
+        ## Btw, this is more efficient and faster.
+        texts = [
+            self.tokenizer.apply_chat_template(
+                [{"role": "user", "content": prompt}],
                 tokenize=False,
                 add_generation_prompt=True,
                 enable_thinking=False,
             )
+            for prompt in txt
+        ]
 
-            model_inputs = self.tokenizer(
-                text,
-                return_tensors="pt",
-                padding="max_length",
-                truncation=True,
-                max_length=self.max_length,
-            )
-
-            all_input_ids.append(model_inputs["input_ids"])
-            all_attention_masks.append(model_inputs["attention_mask"])
-
-        input_ids = torch.cat(all_input_ids, dim=0).to(self.model.device)
-        attention_mask = torch.cat(all_attention_masks, dim=0).to(self.model.device)
+        model_inputs = self.tokenizer(
+            texts,
+            return_tensors="pt",
+            padding="max_length",
+            truncation=True,
+            max_length=self.max_length,
+        ).to(self.model.device)
 
         output = self.model(
-            input_ids=input_ids,
-            attention_mask=attention_mask,
+            **model_inputs,
             output_hidden_states=True,
             use_cache=False,
         )
 
-        out = torch.stack([output.hidden_states[k] for k in OUTPUT_LAYERS_QWEN3], dim=1)
+        out = torch.stack(
+            [output.hidden_states[k] for k in OUTPUT_LAYERS_QWEN3],
+            dim=1,
+        )
+
         return rearrange(out, "b c l d -> b l (c d)")
 
     def test_txt(self, txt: str) -> bool:
@@ -75,4 +76,4 @@ class Qwen3Embedder(nn.Module):
 
 
 def load_qwen3_embedder(variant: str, device: str | torch.device = "cuda"):
-    return Qwen3Embedder(model_spec=f"Qwen/Qwen3-{variant}-FP8", device=device)
+    return Qwen3Embedder(model_spec=f"Qwen/Qwen3-{variant}", device=device)

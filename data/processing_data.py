@@ -36,7 +36,6 @@ class TextEncoderProcess:
 
         print("Loading text encoder...")
         self.text_encoder = load_qwen3_embedder(variant="4B", device=device)
-        self.text_encoder.eval()
         print("Text encoder loaded")
     
     def process(self):
