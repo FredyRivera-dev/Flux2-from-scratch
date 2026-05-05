@@ -21,11 +21,12 @@ transform = transforms.Compose([
 ])
 
 class TextEncoderProcess:
-    def __init__(self, csv_data: str, output_dir: str = "embeddings_output", batch_size: int = 16):
+    def __init__(self, csv_data: str, output_dir: str = "embeddings_output", batch_size: int = 16, max_samples: int = None):
         self.csv_data = csv_data
         self.batch_size = batch_size
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
+        self.max_samples = max_samples
         
         if not os.path.exists(self.csv_data):
             raise ValueError(f"X CSV file not found: {self.csv_data}")
@@ -43,6 +44,8 @@ class TextEncoderProcess:
     
     def process(self):
         total_samples = len(self.df)
+        if self.max_samples is not None:
+            total_samples = min(self.max_samples, total_samples)
         num_batches = (total_samples + self.batch_size - 1) // self.batch_size
         
         print(f"\nStarting processing:")
@@ -101,12 +104,13 @@ class TextEncoderProcess:
  
  
 class ImageProcess:
-    def __init__(self, csv_data: str, images_dir: str, output_dir: str = "images_output", batch_size: int = 16):
+    def __init__(self, csv_data: str, images_dir: str, output_dir: str = "images_output", batch_size: int = 16, max_samples: int = None):
         self.csv_data = csv_data
         self.batch_size = batch_size
         self.images_dir = Path(images_dir)
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
+        self.max_samples = max_samples
 
         if not os.path.exists(self.csv_data):
             raise ValueError(f"X CSV file not found: {self.csv_data}")
@@ -151,6 +155,8 @@ class ImageProcess:
                     })
 
         total_images = len(all_images_data)
+        if self.max_samples is not None:
+            total_images = min(self.max_samples, total_images)
         num_batches = (total_images + self.batch_size - 1) // self.batch_size
 
         print(f"\nStarting image processing:")
@@ -235,7 +241,8 @@ if __name__ == "__main__":
 
     text_processor = TextEncoderProcess(
         csv_data="./data/data.csv",
-        batch_size=16
+        batch_size=16,
+        max_samples=100
     )
 
     text_processor.process()
@@ -243,7 +250,8 @@ if __name__ == "__main__":
     image_processor = ImageProcess(
         csv_data="./data/data.csv",
         images_dir="./images",
-        batch_size=8
+        batch_size=8,
+        max_samples=100
     )
 
     image_processor.process()
